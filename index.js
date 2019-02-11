@@ -75,7 +75,7 @@ app.use(morgan(loggerFormat, {
 
 
 app.get('/', (req, res) => {
-    res.send('<a href="https://lit-badlands-15940.herokuapp.com/app/persons">Mene tänne</a>')
+    res.send('<a href="https://lit-badlands-15940.herokuapp.com/app/persons">Mene tänne (toimii vain herokussa)</a>')
   })
 
 app.get('/info', (req, res) => {
