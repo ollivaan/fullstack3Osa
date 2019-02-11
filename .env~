@@ -1,0 +1,5 @@
+MONGODB_URI=mongodb://fullstack:fullstack1@ds163054.mlab.com:63054/fullstack2019-notes-test
+PORT=3001
+
+
+
