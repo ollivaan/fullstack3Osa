@@ -74,20 +74,8 @@ app.use(morgan(loggerFormat, {
 }));
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 app.get('/', (req, res) => {
-    res.send('<a href="http://localhost:3001/app/persons">Mene tänne</a>')
+    res.send('<a href="https://lit-badlands-15940.herokuapp.com/app/persons">Mene tänne</a>')
   })
 
 app.get('/info', (req, res) => {
