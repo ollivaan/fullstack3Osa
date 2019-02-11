@@ -3,6 +3,7 @@ const express = require('express')
 const app = express()
 
 const bodyParser = require('body-parser')
+// app.use(logger)
 app.use(bodyParser.json())
 
 app.use(bodyParser.urlencoded({
@@ -22,28 +23,28 @@ const Person = require('./models/person')
 
 
 
-let persons = [
-  {
-    "name": "Arto Hellas",
-    "number": "040-123456",
-    "id": 1
-  },
-  {
-    "name": "Martti Tienari",
-    "number": "040-123456",
-    "id": 2
-  },
-  {
-    "name": "Arto Järvinen",
-    "number": "040-123456",
-    "id": 3
-  },
-  {
-    "name": "Lea Kutvonen",
-    "number": "040-123456",
-    "id": 4
-  }
-]
+// let persons = [
+//   {
+//     "name": "Arto Hellas",
+//     "number": "040-123456",
+//     "id": 1
+//   },
+//   {
+//     "name": "Martti Tienari",
+//     "number": "040-123456",
+//     "id": 2
+//   },
+//   {
+//     "name": "Arto Järvinen",
+//     "number": "040-123456",
+//     "id": 3
+//   },
+//   {
+//     "name": "Lea Kutvonen",
+//     "number": "040-123456",
+//     "id": 4
+//   }
+// ]
 
 
 
@@ -68,13 +69,9 @@ app.use(morgan(loggerFormat, {
 }));
 
 
-app.get('/', (req, res) => {
-  res.send('<a href="https://lit-badlands-15940.herokuapp.com/app/persons">Mene tänne (toimii vain herokussa) tai sitten /persons </a>')
-})
-
-app.get('/info', (req, res) => {
-
-  res.send(`<p>puhelinluettelossa on ${persons.length} henkilön tiedot </p> ${Date(persons)}`)
+app.get('/info', (request, response) => {
+  //tulostaa kolme :D
+  response.send(`<p>puhelinluettelossa on ${ Person.length  } henkilön tiedot </p> ${Date(Person)}`)
 })
 
 
@@ -107,11 +104,7 @@ app.post('/persons', (request, response) => {
       error: 'number is missing'
     })
   }
-  // if (result) {
-  //   return response.status(400).json({
-  //     error: 'name already exist'
-  //   })
-  // }
+
 
   const person = new Person({
     name: body.name,
@@ -124,27 +117,61 @@ app.post('/persons', (request, response) => {
   })
 })
 
-app.delete('/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  persons = persons.filter(person => person.id !== id);
-  response.status(204).end();
-})
 
-app.get('/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  Person.findById(id).then(person => {
-    response.json(person.toJSON())
+app.delete('/persons/:id', (request, response, next) => {
+
+  Person.findByIdAndRemove(request.params.id)
+  .then(result => {
+    response.status(204).end()
   })
-//})  
-  const person = persons.find(person => person.id === id)
+  .catch(error => next(error))
+})  
 
-  if (person) {
-    response.json(person)
-  } else {
-    response.status(404).end()
+app.put('/persons/:id', (request, response, next) => {
+  const body = request.body
+
+  const person = {
+    name: body.name,
+    number: body.number
   }
+
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then(updatedPerson => {
+      response.json(updatedPerson.toJSON())
+    })
+    .catch(error => next(error))
 })
 
+app.get('/persons/:id', (request, response, next) => {
+  // const id = Number(request.params.id)
+  Person.findById(request.params.id).then(person => {
+    if(person) {
+      response.json(person.toJSON())
+    } else {
+      response.status(404).end()
+    }
+  })
+  .catch(error => next(error))
+})
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+
+app.use(unknownEndpoint)
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError' && error.kind == 'ObjectId') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+  //tänne lisää sitten kun menee rikki
+
+  next(error)
+}
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
