@@ -1,4 +1,4 @@
-MONGODB_URI=mongodb://fullstack:fullstack1@ds163054.mlab.com:63054/fullstack2019-notes-test
+MONGODB_URI=mongodb://fullstack:sPiLZXPp0znsDLHa@cluster0-shard-00-00-gbdjr.mongodb.net:27017,cluster0-shard-00-01-gbdjr.mongodb.net:27017,cluster0-shard-00-02-gbdjr.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true
 PORT=3001
 
 
