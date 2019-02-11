@@ -16,6 +16,7 @@ const cors = require('cors')
 
 app.use(cors())
 
+app.use(express.static('build'))
 
 // const requestLogger = (request, response, next) => {
 //   console.log('Method:', request.method)
@@ -83,7 +84,7 @@ app.get('/info', (req, res) => {
     res.send(`<p>puhelinluettelossa on ${persons.length} henkilön tiedot </p> ${Date(persons)}`)
   }) 
 
-app.get('/app/persons', (req, res) => {
+app.get('/persons', (req, res) => {
   res.json(persons)
 })
 
@@ -100,7 +101,7 @@ return Math.floor(Math.random() * (max - min)) + min;
 
 
 
-app.post('/app/persons', (request, response) => {
+app.post('/persons', (request, response) => {
   const body = request.body
 
   const result = persons.find( person => person.name === body.name );
@@ -128,13 +129,13 @@ app.post('/app/persons', (request, response) => {
   response.json(person)
 })
 
-app.delete('/app/persons/:id', (request, response) => {
+app.delete('/persons/:id', (request, response) => {
     const id = Number(request.params.id)
     persons = persons.filter(person => person.id !== id);
     response.status(204).end();
 })
 
-app.get('/app/persons/:id', (request, response) => {
+app.get('/persons/:id', (request, response) => {
     const id = Number(request.params.id)
     const person = persons.find(person => person.id === id)
     
