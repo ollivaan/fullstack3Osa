@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-
+const uniqueValidator = require('mongoose-unique-validator');
 
 const url = process.env.MONGODB_URI
 
@@ -13,17 +13,26 @@ mongoose.connect(url, { useNewUrlParser: true })
     console.log('error connection to MongoDB:', error.message)
   })
 
-const personSchema = new mongoose.Schema({
-    name: {
-      type: String,
-      minlength: 2,
-      required: true
-    },
-    number: { 
-      type: String,
-      required: true
-    }    
-})
+
+  
+
+// const personSchema = new mongoose.Schema({
+//     name: {
+//       type: String,
+//       minlength: 3,
+//       required: true
+//     },
+//     number: { 
+//       type: String,
+//       minlength: 8,
+//       required: true
+//     }    
+// })
+  // Define your schema as normal.
+const personSchema = mongoose.Schema({
+    name: { type: String, required: true, minlength: 3 },
+    number: { type: String, unique: true, required: true, minlength: 7 }
+});
 personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
@@ -31,4 +40,8 @@ personSchema.set('toJSON', {
     delete returnedObject.__v
   }
 })
+
+
+// Apply the uniqueValidator plugin to userSchema.
+personSchema.plugin(uniqueValidator);
 module.exports = mongoose.model('Person', personSchema)

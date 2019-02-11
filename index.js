@@ -25,28 +25,28 @@ const Person = require('./models/person')
 
 
 
-// let persons = [
-//   {
-//     "name": "Arto Hellas",
-//     "number": "040-123456",
-//     "id": 1
-//   },
-//   {
-//     "name": "Martti Tienari",
-//     "number": "040-123456",
-//     "id": 2
-//   },
-//   {
-//     "name": "Arto Järvinen",
-//     "number": "040-123456",
-//     "id": 3
-//   },
-//   {
-//     "name": "Lea Kutvonen",
-//     "number": "040-123456",
-//     "id": 4
-//   }
-// ]
+let persons = [
+  {
+    "name": "Arto Hellas",
+    "number": "040-123456",
+    "id": 1
+  },
+  {
+    "name": "Martti Tienari",
+    "number": "040-123456",
+    "id": 2
+  },
+  {
+    "name": "Arto Järvinen",
+    "number": "040-123456",
+    "id": 3
+  },
+  {
+    "name": "Lea Kutvonen",
+    "number": "040-123456",
+    "id": 4
+  }
+]
 
 
 
@@ -84,19 +84,19 @@ app.get('/persons', (request, response) => {
 });
 
 
-const generateId = () => {
-  const maxId = persons.length > 0
-    ? Math.max(...persons.map(p => p.id))
-    : 0
+// const generateId = () => {
+//   const maxId = persons.length > 0
+//     ? Math.max(...persons.map(p => p.id))
+//     : 0
 
-  min = Math.ceil(maxId);
-  max = Math.floor(1000000);
+//   min = Math.ceil(maxId);
+//   max = Math.floor(1000000);
 
-  return Math.floor(Math.random() * (max - min)) + min;
-}
+//   return Math.floor(Math.random() * (max - min)) + min;
+// }
 
 
-app.post('/persons', (request, response) => {
+app.post('/persons', (request, response, next) => {
   const body = request.body
 //   const result = persons.find( person => person.name === body.name );
   if (body.name === undefined) {
@@ -110,12 +110,11 @@ app.post('/persons', (request, response) => {
 
   const person = new Person({
     name: body.name,
-    number: body.number,
-    id: generateId()
+    number: body.number
   })
 
   person.save().then(savedPerson => {
-    return saverdPerson.toJSON()
+    return savedPerson.toJSON()
     // response.json(savedPerson.toJSON())
   })
     .then(savedAndFormattedPerson => {
